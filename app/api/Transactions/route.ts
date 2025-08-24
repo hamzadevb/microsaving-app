@@ -1,17 +1,27 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../../../lib/prisma";
 
-const prisma = new PrismaClient();
-
-export async function GET() {
-    const transactions = await prisma.transaction.findMany({
-        include: { user: true },
-    });
-    return NextResponse.json(transactions);
-}
 
 export async function POST(req: Request) {
-    const data = await req.json();
-    const transaction = await prisma.transaction.create({ data });
-    return NextResponse.json(transaction);
+    try {
+        const body = await req.json();
+        const { userId, amount, description } = body;
+
+        const rounded = Math.ceil(amount);
+        const appliedRounding = rounded - amount;
+
+        const transaction = await prisma.transaction.create({
+            data: {
+                userId,
+                amount,
+                description,
+                appliedRounding,
+            },
+        });
+
+        return NextResponse.json(transaction);
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: "Failed to create transaction" }, { status: 500 });
+    }
 }
