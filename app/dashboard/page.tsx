@@ -1,7 +1,7 @@
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../../lib/auth';
-import { prisma } from '../../../lib/prisma';
-import Dashboard from '../../components/Dashboard';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+import Dashboard from '@/components/Dashboard';
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -14,8 +14,11 @@ export default async function DashboardPage() {
     // Fetch data directly in the server component
     const userData = await prisma.user.findUnique({
         where: { email: session.user.email },
-        select: { totalSaved: true, currency: true },
     });
+
+    if (!userData) {
+        return <div>Not found</div>;
+    }
 
     const recentTransactions = await prisma.transaction.findMany({
         where: { user: { email: session.user.email } },

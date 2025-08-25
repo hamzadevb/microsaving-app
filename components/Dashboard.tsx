@@ -3,35 +3,11 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import {SavingsGoal, Transaction, User} from "@/types/models";
 
-// Define TypeScript interfaces
-interface Transaction {
-    id: string;
-    originalAmount: number;
-    roundedAmount: number;
-    savingsAmount: number;
-    merchant: string;
-    date: string;
-    type: string;
-    status: string;
-}
-
-interface SavingsGoal {
-    id: string;
-    name: string;
-    targetAmount: number;
-    currentAmount: number;
-    deadline: string | null;
-    status: string;
-}
-
-interface UserData {
-    totalSaved: number;
-    currency: string;
-}
 
 interface DashboardProps {
-    userData: UserData;
+    userData: User;
     recentTransactions: Transaction[];
     goals: SavingsGoal[];
 }
